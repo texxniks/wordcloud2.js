@@ -3,99 +3,99 @@
 ## Feature detection
 
     WordCloud.isSupported
+    
+будет оцениваться как `false`, если браузер не предоставляет необходимые функции для запуска wordcloud2.js.
 
-will evaluates to `false` if the browser doesn't supply necessary functionalities for wordcloud2.js to run.
+## Минимальный размер шрифта
 
-## Minimum font size
-
-Some browsers come with restrictions on minimum font size preference on, and the preference will also impact canvas.
-wordcloud2.js works around it by scaling the canvas, but you may be interested to know value of the preference. The value detected is accessible at
+Некоторые браузеры имеют ограничения на предпочтение минимального размера шрифта, и это предпочтение также влияет на холст.
+wordcloud2.js обходит это, масштабируя холст, но вам может быть интересно узнать значение предпочтения. Обнаруженное значение доступно по адресу
 
 	WordCloud.minFontSize
 
-## Usage
+## использование
 
     WordCloud(elements, options);
 
-`elements` is the DOM Element of the canvas, i.e. `document.getElementById('my_canvas')` or `$('#my_canvas')[0]` in jQuery.
-It can be also an array of DOM Elements. If a `<canvas>` element is passed, Word Cloud would generate an image on it; if it's some other element, Word Cloud would create `<span>` elements and fill it.
+`elements` - это элемент DOM холста, то есть` document.getElementById ('my_canvas') `или` $ ('# my_canvas') [0] `в jQuery.
+Это также может быть массив элементов DOM. Если передан элемент <canvas>, Word Cloud сгенерирует на нем изображение; если это какой-то другой элемент, Word Cloud создаст элементы <span> и заполнит его.
+	
+В зависимости от приложения вы можете создать изображение (высокая точность, но взаимодействие ограничено) или создать «облако» с помощью DOM для дальнейшего моделирования.
 
-Depend on the application, you may want to create an image (high fidelity but interaction is limited) or create the "cloud" with DOM to do further styling.
+## Опции
 
-## Option
+Доступные опции как свойство объекта `options`:
 
-Available options as the property of the `options` object are:
+### Презентация
 
-### Presentation
+* `list`: Список слов / текста для рисования на холсте в виде двумерного массива в виде` [слово, размер] `.
+* например, `[['foo', 12], ['bar', 6]]`
+* По желанию, вы можете отправлять дополнительные данные в виде элементов массива в форме «[word, size, data1, data2, ...]», которые затем можно использовать в функциях обратного вызова для взаимодействий «click» и «hover».
+* например, `[['foo', 12, 'http://google.com?q=foo'], ['bar', 6, 'http://google.com?q=bar']]`.
+* `fontFamily`: используемый шрифт.
+* `fontWeight`: вес шрифта для использования, может быть, например,` normal`, `bold` или` 600`, или `callback (word, weight, fontSize)` определяет различный вес шрифта для каждого элемента в список.
+* `color`: цвет текста, может быть любым цветом CSS, или` callback (word, weight, fontSize, distance, theta) `определяет разные цвета для каждого элемента в списке.
+  Вы также можете указать цвета с помощью встроенных ключевых слов: «random-dark» и «random-light». Если это облако DOM, цвет также может быть нулевым, чтобы отключить жесткое кодирование
+  цвет в элементы диапазона (позволяющий настраивать на уровне класса).
+* `classes`: для облаков DOM позволяет пользователю определять класс элементов диапазона. Может быть обычной строкой класса,
+  применение одного и того же класса к каждому диапазону или `обратный вызов (слово, вес, размер шрифта, расстояние, тета)` для определения класса для каждого диапазона.
+  В облаках холста или при значении «null» этот параметр не действует.
+* `minSize`: минимальный размер шрифта для рисования на холсте.
+* `weightFactor`: функция для вызова или число для умножения на` размер` каждого слова в списке.
+* `clearCanvas`: закрасить весь холст в цвет фона и считать его пустым перед запуском.
+* `backgroundColor`: цвет фона.
 
-* `list`: List of words/text to paint on the canvas in a 2-d array, in the form of `[word, size]`.
-	* e.g. `[['foo', 12], ['bar', 6]]`
-	* Optionally, you can send additional data as array elements, in the form of `[word, size, data1, data2, ... ]` which can then be used in the callback functions of `click` and `hover` interactions.
-	* e.g. `[['foo', 12, 'http://google.com?q=foo'], ['bar', 6, 'http://google.com?q=bar']]`. 
-* `fontFamily`: font to use.
-* `fontWeight`: font weight to use, can be, as an example, `normal`, `bold` or `600` or a `callback(word, weight, fontSize)` specifies different font-weight for each item in the list. 
-* `color`: color of the text, can be any CSS color, or a `callback(word, weight, fontSize, distance, theta)` specifies different color for each item in the list.
-  You may also specify colors with built-in keywords: `random-dark` and `random-light`. If this is a DOM cloud, color can also be `null` to disable hardcoding of
-  color into span elements (allowing you to customize at the class level).
-* `classes`: for DOM clouds, allows the user to define the class of the span elements. Can be a normal class string,
-  applying the same class to every span or a `callback(word, weight, fontSize, distance, theta)` for per-span class definition.
-  In canvas clouds or if equals `null`, this option has no effect.
-* `minSize`: minimum font size to draw on the canvas.
-* `weightFactor`: function to call or number to multiply for `size` of each word in the list.
-* `clearCanvas`: paint the entire canvas with background color and consider it empty before start.
-* `backgroundColor`: color of the background.
+### Размер
 
-### Dimension
+* `gridSize`: размер сетки в пикселях для обозначения доступности холста - чем больше размер сетки, тем больше промежуток между словами.
+* `origin`: происхождение« облака »в` [x, y] `.
+* `drawOutOfBound`: установите значение` true`, чтобы слово было отрисовано частично за пределами холста. Разрешить рисование слова больше, чем размер холста.
+* `shrinkToFit`: установите значение` true`, чтобы сжать слово так, чтобы оно поместилось на холсте. Лучше всего, если для параметра drawOutOfBound установлено значение false. : warning: Это слово теперь будет иметь меньший вес.
 
-* `gridSize`: size of the grid in pixels for marking the availability of the canvas — the larger the grid size, the bigger the gap between words.
-* `origin`: origin of the “cloud” in `[x, y]`.
-* `drawOutOfBound`: set to `true` to allow word being draw partly outside of the canvas. Allow word bigger than the size of the canvas to be drawn.
-* `shrinkToFit`: set to `true` to shrink the word so it will fit into canvas. Best if `drawOutOfBound` is set to `false`. :warning: This word will now have lower `weight`.
+### Маска
 
-### Mask
+* `drawMask`: визуализируйте сетку, рисуя квадраты, чтобы замаскировать нарисованные области.
+* `maskColor`: цвет квадратов маски.
+* `maskGapWidth`: ширина промежутков между квадратами маски.
 
-* `drawMask`: visualize the grid by draw squares to mask the drawn areas.
-* `maskColor`: color of the mask squares.
-* `maskGapWidth`: width of the gaps between mask squares.
+### Время
 
-### Timing
+* `wait`: Подождите * x * миллисекунд, прежде чем начать рисование следующего элемента с помощью` setTimeout`.
+* `abortThreshold`: Если вызов with в цикле занимает более * x * миллисекунд (и блокирует браузер), немедленно прервите его.
+* `abort`: функция обратного вызова для вызова при прерывании.
 
-* `wait`: Wait for *x* milliseconds before start drawn the next item using `setTimeout`.
-* `abortThreshold`: If the call with in the loop takes more than *x* milliseconds (and blocks the browser), abort immediately.
-* `abort`: callback function to call when abort.
+### Вращение
 
-### Rotation
+* `minRotation`: если слово должно вращаться, минимальный угол поворота (в рад) текста должен вращаться.
+* `maxRotation`: если слово должно вращаться, максимальное вращение (в рад) текста должно вращаться. Установите два значения равными, чтобы весь текст находился под одним углом.
+* `RotationSteps`: Принудительное использование определенного количества углов. Установите значение, равное 2 в диапазоне -90 ° / 90 °, означает, что будут использоваться только -90, 0 или 90.
 
-* `minRotation`: If the word should rotate, the minimum rotation (in rad) the text should rotate.
-* `maxRotation`: If the word should rotate, the maximum rotation (in rad) the text should rotate. Set the two value equal to keep all text in one angle.
-* `rotationSteps`: Force the use of a defined number of angles. Set the value equal to 2 in a -90°/90° range means just -90, 0 or 90 will be used. 
+### Случайность
 
-### Randomness
+* `shuffle`: перетасуйте точки для рисования, чтобы результат каждый раз был другим для одного и того же списка и настроек.
+* `rotateRatio`: вероятность поворота слова. Установите число на 1, чтобы всегда вращать.
 
-* `shuffle`: Shuffle the points to draw so the result will be different each time for the same list and settings.
-* `rotateRatio`: Probability for the word to rotate. Set the number to 1 to always rotate.
+### Форма
 
-### Shape
+* `shape`: форма" облака "для рисования. Может быть любое полярное уравнение, представленное в виде функции обратного вызова, или имеющееся ключевое слово.
+Доступные подарки: «круг» (по умолчанию), «кардиоид» (кривая в форме яблока или сердца, наиболее известное полярное уравнение), «ромб», «квадрат», «треугольник вперед», «треугольник» (псевдоним «треугольник»). -верху, пятиугольник и звезда.
+* `ellipticity`: степень" плоскостности "формы, которую wordcloud2.js должен рисовать.
 
-* `shape`: The shape of the "cloud" to draw. Can be any polar equation represented as a callback function, or a keyword present.
-Available presents are `circle` (default), `cardioid` (apple or heart shape curve, the most known polar equation), `diamond`, `square`, `triangle-forward`, `triangle`, (alias of `triangle-upright`, `pentagon`, and `star`.
-* `ellipticity`: degree of "flatness" of the shape wordcloud2.js should draw.
+### Интерактивный
 
-### Interactive
+Примечание. «Hover» и «click» в настоящее время доступны только для облаков слов HTML5 Canvas.
 
-Notice: `hover` and `click` are currently only for HTML5 canvas word clouds.
+* `hover`: обратный вызов для вызова, когда курсор входит или покидает область, занятую словом. Обратный вызов будет принимать аргументы callback (элемент, измерение, событие), где event - исходное событие mousemove.
+* `click`: обратный вызов для вызова, когда пользователь нажимает на слово. Обратный вызов будет принимать аргументы callback (элемент, измерение, событие), где event - исходное событие click.
 
-* `hover`: callback to call when the cursor enters or leaves a region occupied by a word. The callback will take arguments `callback(item, dimension, event)`, where `event` is the original `mousemove` event.
-* `click`: callback to call when the user clicks on a word. The callback will take arguments `callback(item, dimension, event)`, where `event` is the original `click` event.
+## События
 
-## Events
-
-You can listen to those custom DOM events filed from the canvas element, instead of using callbacks for taking the appropriate action.
-Cancel the first two events causes the operation to stop immediately.
+Вы можете прослушивать эти настраиваемые события DOM, зарегистрированные из элемента холста, вместо того, чтобы использовать обратные вызовы для выполнения соответствующих действий.
+Отмена первых двух событий приводит к немедленной остановке операции.
 
 * `wordcloudstart`
 * `wordclouddrawn`
 * `wordcloudstop`
 * `wordcloudabort`
 
-wordcloud2.js itself will stop at `wordcloudstart` event.
+Сам wordcloud2.js остановится на событии wordcloudstart.
